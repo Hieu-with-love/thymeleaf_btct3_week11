@@ -4,6 +4,8 @@ import com.ex3.Exltweb.dto.CategoryDTO;
 import com.ex3.Exltweb.entity.Category;
 import com.ex3.Exltweb.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +19,25 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/categories")
-    public String showCategories(Model model){
-        List<Category> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
-        return "categories";
+    public String showCategories(Model model,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "2") int size,
+                                 @RequestParam(required = false) String keyword
+    ){
+        Page<Category> categoryPage;
+
+        if (keyword == null || keyword.isEmpty()) {
+            categoryPage = categoryService.getAllCategories(PageRequest.of(page, size));
+        } else {
+            categoryPage = categoryService.findByKeyword(keyword, PageRequest.of(page, size));
+        }
+
+        model.addAttribute("categoryPage", categoryPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+
+        return "categories"; // tên của view template
     }
 
     @GetMapping("/add-category")

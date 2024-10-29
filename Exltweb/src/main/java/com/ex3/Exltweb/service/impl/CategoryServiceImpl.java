@@ -7,6 +7,8 @@ import com.ex3.Exltweb.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -121,7 +123,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public Page<Category> getAllCategories(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<Category> findByKeyword(String keyword, Pageable pageable) {
+        return categoryRepository.findByKeywordContaining(keyword, pageable);
+    }
+
 }
