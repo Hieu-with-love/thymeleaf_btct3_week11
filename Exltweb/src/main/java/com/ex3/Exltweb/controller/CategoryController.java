@@ -21,9 +21,9 @@ public class CategoryController {
     @GetMapping("/categories")
     public String showCategories(Model model,
                                  @RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "2") int size,
                                  @RequestParam(required = false) String keyword
     ){
+        int size = 3;
         Page<Category> categoryPage;
 
         if (keyword == null || keyword.isEmpty()) {
