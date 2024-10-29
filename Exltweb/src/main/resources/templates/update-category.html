@@ -1,10 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Trần Trung Hiếu</title>
+    <div th:replace="~{fragments/head :: head}"></div>
+    <script type="text/javascript">
+        function showError(message) {
+            if (message) {
+                alert(message)
+            }
+        }
+    </script>
 </head>
 <body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto rounded border p-4 m-4">
+            <h2>Update category</h2>
+            <form action="/update-category" method="post" enctype="multipart/form-data"
+                  th:object="${category}">
+                <div class="row">
+                    <div class="col-lg-8 center-block">
+                        <input type="hidden" th:value="*{id}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}"
+                                   required>
+                            <span th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
+                                  th:errors="*{name}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" th:field="*{description}"
+                                   required>
+                            <span th:if="${#fields.hasErrors('description')}" th:errorclass="text-danger"
+                                  th:errors="*{description}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Image</label>
+                            <input id="file" class="form-control" type="file"
+                                   th:field="*{images}"
+                                   required>
+                            <span th:if="${#fields.hasErrors('images')}" th:errorclass="text-danger"
+                                  th:errors="*{images}"></span>
+                        </div>
+
+                        <div class="row">
+                            <button type="submit" class="col-md-6 btn btn-primary mx-3" style="width: 300px;">
+                                Update category
+                            </button>
+                            <a th:href="@{/categories}" class="col-md-6 btn btn-secondary mx-3">Cancel</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 center-block">
+                        <h3>Ảnh sản phẩm</h3>
+                        <img th:src="@{'/uploads/' + *{images}}" alt="Ảnh sản phẩm"
+                             width="200px;" height="200px;">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4 rounded border mx-3">
+
+        </div>
+    </div>
+</div>
+
+<!-- Gọi hàm JavaScript hiển thị lỗi nếu có -->
+<script type="text/javascript">
+    /* Thêm thuộc tính th:text vào thẻ span để lấy thông báo lỗi từ Model */
+    let errorMessage = /*[[${errorMessage}]]*/ '';
+    showError(errorMessage);
+</script>
 
 </body>
 </html>

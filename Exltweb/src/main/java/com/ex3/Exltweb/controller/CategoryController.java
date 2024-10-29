@@ -32,22 +32,38 @@ public class CategoryController {
 
     @PostMapping("/add-category")
     public String addCategory(@ModelAttribute CategoryDTO categoryDTO, Model model) throws IOException {
-        boolean isSuccess = categoryService.createCategory(categoryDTO);
-        if(isSuccess){
+        Category category = categoryService.createCategory(categoryDTO);
+        if(category != null){
             return "redirect:/categories";
         }
         return "add-category";
     }
 
-    @PostMapping("/update-category")
-    public String updateCategory(Model model){
+    @GetMapping("/update-category")
+    public String showUpdateCategory(@RequestParam("id") Long id ,Model model){
+        Category category = categoryService.getCategory(id);
+        model.addAttribute("category", category);
+        return "update-category";
+    }
 
+    @PostMapping("/update-category")
+    public String updateCategory(@RequestParam("id") Long id,
+                                @ModelAttribute CategoryDTO categoryDTO,
+                                Model model
+    ) throws IOException {
+        categoryService.updateCategory(id, categoryDTO);
+        Category category = categoryService.getCategory(id);
+        model.addAttribute("categoryDTO", categoryDTO);
+        model.addAttribute("category", category);
+        if(category != null){
+            return "redirect:/categories";
+        }
         return "update-category";
     }
 
     @GetMapping("/delete-category")
-    public String deleteCategory(Model model){
-
+    public String deleteCategory(@RequestParam("id") Long id,Model model){
+        categoryService.deleteCategory(id);
         return "redirect:/categories";
     }
 }

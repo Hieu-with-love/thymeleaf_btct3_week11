@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CategoryService {
-    boolean createCategory(CategoryDTO categoryDTO) throws IOException;
-    boolean updateCategory(Long id, CategoryDTO categoryDTO);
+    Category createCategory(CategoryDTO categoryDTO) throws IOException;
+    Category updateCategory(Long id, CategoryDTO categoryDTO) throws IOException;
     void deleteCategory(Long id);
     Category getCategory(Long id);
     List<Category> getAllCategories();

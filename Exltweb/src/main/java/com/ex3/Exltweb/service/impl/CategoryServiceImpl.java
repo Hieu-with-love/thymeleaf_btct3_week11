@@ -6,6 +6,7 @@ import com.ex3.Exltweb.repository.CategoryRepository;
 import com.ex3.Exltweb.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public boolean createCategory(CategoryDTO categoryDTO) throws IOException {
+    public Category createCategory(CategoryDTO categoryDTO) throws IOException {
         String images = "";
         if (categoryDTO.getImage() == null) {
             images = "/uploads/default-product.jpg";
@@ -39,8 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .description(categoryDTO.getDescription())
                 .images(images)
                 .build();
-        categoryRepository.save(category);
-        return true;
+        return categoryRepository.save(category);
     }
 
     // has completed yet
@@ -80,16 +80,33 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean updateCategory(Long id, CategoryDTO categoryDTO) {
+    public Category updateCategory(Long id, CategoryDTO categoryDTO) throws IOException {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Not found Category"));
+        String newImages = "";
         // Neu co anh moi, thi xoa anh cu
-
+        // handle delete old image if has image uploaded
+        if (!categoryDTO.getImage().isEmpty()) {
+            if (!isValidSuffixImage(Objects.requireNonNull(categoryDTO.getImage().getOriginalFilename()))) {
+                throw new RuntimeException("File is not an image");
+            }
+            String uploadDir = "uploads/";
+            java.nio.file.Path oldImagePath = Paths.get(uploadDir + existingCategory.getImages());
+            try {
+                if (!oldImagePath.getFileName().toString().equals("default-product.jpg")) {
+                    Files.delete(oldImagePath);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot delete old image." + e.getMessage());
+            }
+            // store file be able to exception
+            newImages = storeFile(categoryDTO.getImage());
+            existingCategory.setImages(newImages);
+        }
         // them thuoc tinh moi vao
         existingCategory.setName(categoryDTO.getName());
         existingCategory.setDescription(categoryDTO.getDescription());
-        categoryRepository.save(existingCategory);
-        return true;
+        return categoryRepository.save(existingCategory);
     }
 
     @Override
