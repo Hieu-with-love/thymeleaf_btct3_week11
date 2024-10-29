@@ -6,10 +6,9 @@ import com.ex3.Exltweb.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -32,8 +31,11 @@ public class CategoryController {
     }
 
     @PostMapping("/add-category")
-    public String addCategory(@RequestParam CategoryDTO categoryDTO, Model model){
-
+    public String addCategory(@ModelAttribute CategoryDTO categoryDTO, Model model) throws IOException {
+        boolean isSuccess = categoryService.createCategory(categoryDTO);
+        if(isSuccess){
+            return "redirect:/categories";
+        }
         return "add-category";
     }
 
