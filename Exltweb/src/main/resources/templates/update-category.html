@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-md-8 mx-auto rounded border p-4 m-4">
             <h2>Update category</h2>
-            <form action="/update-category" method="post" enctype="multipart/form-data"
+            <form th:action="@{/update-category(id=${category.id})}" method="post" enctype="multipart/form-data"
                   th:object="${category}">
                 <div class="row">
                     <div class="col-lg-8 center-block">
@@ -38,8 +38,7 @@
                         <div class="mb-3">
                             <label for="file" class="form-label">Image</label>
                             <input id="file" class="form-control" type="file"
-                                   th:field="*{images}"
-                                   required>
+                                   th:field="*{images}">
                             <span th:if="${#fields.hasErrors('images')}" th:errorclass="text-danger"
                                   th:errors="*{images}"></span>
                         </div>

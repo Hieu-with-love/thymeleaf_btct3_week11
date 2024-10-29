@@ -86,9 +86,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Not found Category"));
         String newImages = "";
+
         // Neu co anh moi, thi xoa anh cu
         // handle delete old image if has image uploaded
-        if (!categoryDTO.getImage().isEmpty()) {
+        if (categoryDTO.getImage() != null) {
             if (!isValidSuffixImage(Objects.requireNonNull(categoryDTO.getImage().getOriginalFilename()))) {
                 throw new RuntimeException("File is not an image");
             }
